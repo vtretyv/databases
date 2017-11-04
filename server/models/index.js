@@ -6,7 +6,6 @@ module.exports = {
     get: function () {
       //Open connection
       //Query for messages
-      let data;
       db.connectedNow.query('SELECT * FROM `messages`', function (error, results, fields) {
         if (error) { console.log('ERROR'); throw error; }
       //Parse data NEEDED  
@@ -25,9 +24,6 @@ module.exports = {
         console.log('parsed data :', pData);
         return pData; 
       });
-      //Run Batch
-      //Query Messages
-      //Send messages to controller
     } // a function which can be used to insert a message into the database
   },
 
@@ -49,7 +45,7 @@ module.exports = {
         console.log('data: ', data); 
         let pData = qs.parse(data);
         console.log('parsed data :', pData);
-        return pData;      
+        return pData; //How do we incorporate a callback?     
       });
     }
   }

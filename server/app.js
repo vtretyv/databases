@@ -25,6 +25,13 @@ app.use('/classes', router);
 app.use(express.static(__dirname + '/../client'));
 
 // If we are being run directly, run the server.
+app.options('/*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  res.sendStatus(200);
+});
+
 if (!module.parent) {
   app.listen(app.get('port'));
   console.log('Listening on', app.get('port'));
