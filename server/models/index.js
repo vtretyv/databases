@@ -1,15 +1,57 @@
 var db = require('../db');
+var qs = require ('querystring');
 
 module.exports = {
   messages: {
-    get: function () {}, // a function which produces all the messages
-    post: function () {} // a function which can be used to insert a message into the database
+    get: function () {
+      //Open connection
+      //Query for messages
+      let data;
+      db.connectedNow.query('SELECT * FROM `messages`', function (error, results, fields) {
+        if (error) { console.log('ERROR'); throw error; }
+      //Parse data NEEDED  
+        return results;     
+      });
+      
+      
+    }, // a function which produces all the messages
+    post: function (data) {
+      //Open connection
+      db.connectedNow.query('SELECT * FROM `messages`', function (error, results, fields) {
+        if (error) { console.log('ERROR'); throw error; }
+      //Parse data NEEDED  
+        console.log('data: ', data); 
+        let pData = qs.parse(data);
+        console.log('parsed data :', pData);
+        return pData; 
+      });
+      //Run Batch
+      //Query Messages
+      //Send messages to controller
+    } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function () {
+      db.connectedNow.query('SELECT * FROM `users`', function (error, results, fields) {
+        if (error) { console.log('ERROR'); throw error; }
+      //Parse data NEEDED  
+        return results;     
+      });
+      
+    },
+    post: function (data) {
+      db.connectedNow.query('SELECT * FROM `users`', function (error, results, fields) {
+        if (error) { console.log('ERROR'); throw error; }
+        data = results;
+      //Parse data NEEDED  
+        console.log('data: ', data); 
+        let pData = qs.parse(data);
+        console.log('parsed data :', pData);
+        return pData;      
+      });
+    }
   }
 };
 
