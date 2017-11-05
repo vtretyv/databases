@@ -3,7 +3,7 @@ var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: 'http://127.0.0.1:3000/',
+  server: '127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -26,13 +26,13 @@ var app = {
     app.$roomSelect.on('change', app.handleRoomChange);
 
     // Fetch previous messages
-    app.startSpinner();
+    // app.startSpinner();
     app.fetch(false);
 
     // Poll for new messages
-    setInterval(function() {
-      app.fetch(true);
-    }, 3000);
+    // setInterval(function() {
+    //   app.fetch(true);
+    // }, 3000);
   },
 
   send: function(message) {
@@ -57,36 +57,44 @@ var app = {
   },
 
   fetch: function(animate) {
+    console.log('inside fetch');
+    console.log(animate);
     $.ajax({
-      url: app.server,
+      url: 'http://127.0.0.1:3000/classes/messages',
       type: 'GET',
-      //data: { order: '-createdAt' },
-      contentType: 'application/json',
+      // data: {},
+      // contentType: 'applicaton/json',
+      
       success: function(data) {
+        console.log('this is data from client: ', data);
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        //if (!data.results || !data.results.length) { return; }
 
         // Store messages for caching later
-        app.messages = data.results;
+        app.message = data.results;
 
         // Get the last message
-        var mostRecentMessage = data.results[data.results.length - 1];
+        //var mostRecentMessage = data.results[data.results.length - 1];
 
         // Only bother updating the DOM if we have a new message
-        if (mostRecentMessage.objectId !== app.lastMessageId) {
+        // if (mostRecentMessage.objectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
-          app.renderRoomList(data.results);
+        //app.renderRoomList(data);
 
           // Update the UI with the fetched messages
-          app.renderMessages(data.results, animate);
+        app.renderMessages(data, animate);
 
           // Store the ID of the most recent message
-          app.lastMessageId = mostRecentMessage.objectId;
-        }
+          // app.lastMessageId = mostRecentMessage.objectId;
+        //}
       },
       error: function(error) {
+
         console.error('chatterbox: Failed to fetch messages', error);
+        console.log('inside error');
+        return error;
       }
+      
     });
   },
 
@@ -95,10 +103,15 @@ var app = {
   },
 
   renderMessages: function(messages, animate) {
-    // Clear existing messages`
+    // Clear existing messages
+    console.log('In Render Message', messages);
+    messages = JSON.parse(messages);
+    console.log('In Render Message after parse', messages);
+    
     app.clearMessages();
     app.stopSpinner();
     if (Array.isArray(messages)) {
+      console.log('in the first if of render messages');
       // Add all fetched messages that are in our current room
       messages
         .filter(function(message) {
@@ -116,7 +129,7 @@ var app = {
 
   renderRoomList: function(messages) {
     app.$roomSelect.html('<option value="__newRoom">New room...</option>');
-
+    console.log(messages);
     if (messages) {
       var rooms = {};
       messages.forEach(function(message) {
@@ -217,7 +230,7 @@ var app = {
       text: app.$message.val(),
       roomname: app.roomname || 'lobby'
     };
-
+    
     app.send(message);
 
     // Stop the form from submitting
